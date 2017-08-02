@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"./cmd"
+	"github.com/uchimanajet7/ca-cli/cmd"
 )
 
 func main() {
