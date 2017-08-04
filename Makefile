@@ -1,9 +1,10 @@
 BINARY := ca
 VERSION	:= v0.1.0
 REVISION := $(shell git rev-parse --short HEAD)
-LDFLAGS := "-X github.com/uchimanajet7/ca-cli/cmd.version=${VERSION} -X github.com/uchimanajet7/ca-cli/cmd.revision=${REVISION} -extldflags \"-static\""
+GITHUB_ORG := uchimanajet7
+GITHUB_REPO := ca-cli
+LDFLAGS := "-X github.com/${GITHUB_ORG}/${GITHUB_REPO}/cmd.version=${VERSION} -X github.com/${GITHUB_ORG}/${GITHUB_REPO}/cmd.revision=${REVISION} -extldflags \"-static\""
 OSARCH := "darwin/amd64 linux/amd64 windows/amd64"
-GITHUB := uchimanajet7
 
 ifndef GOBIN
 GOBIN := $(shell echo "$${GOPATH%%:*}/bin")
@@ -38,7 +39,7 @@ install: deps
 .PHONY: cross
 cross: deps $(GOX)
 	rm -rf ./out && \
-	gox -verbose -ldflags $(LDFLAGS) -osarch $(OSARCH) -output "./out/{{.Dir}}_${VERSION}_{{.OS}}_{{.Arch}}/$(BINARY)"
+	gox -verbose -ldflags $(LDFLAGS) -osarch $(OSARCH) -output "./out/${GITHUB_REPO}_${VERSION}_{{.OS}}_{{.Arch}}/$(BINARY)"
 
 .PHONY: package
 package: cross $(ARCHIVER)
@@ -49,11 +50,11 @@ package: cross $(ARCHIVER)
 
 .PHONY: release
 release: $(GHR)
-	ghr -u $(GITHUB) $(VERSION) pkg/
+	ghr -u $(GITHUB_ORG) $(VERSION) pkg/
 
 .PHONY: digest
 digest:
-	openssl dgst -sha256 pkg/${BINARY}_${VERSION}_darwin_amd64.zip
+	openssl dgst -sha256 pkg/*.zip
 
 .PHONY: lint
 lint: $(LINT)
