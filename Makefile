@@ -23,7 +23,7 @@ $(GHR): ; @go get github.com/tcnksm/ghr
 
 .PHONY: deps
 deps:
-	go get -d -v .
+	go get -v -t -d ./...
 
 .PHONY: build
 build: deps
@@ -63,7 +63,7 @@ vet:
 
 .PHONY: test
 test:
-	@go test ./...
+	@go test -v ./...
 
 .PHONY: check
 check: lint vet test build
