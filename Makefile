@@ -43,9 +43,9 @@ cross: deps $(GOX)
 .PHONY: package
 package: cross $(ARCHIVER)
 	rm -rf ./pkg && mkdir ./pkg && \
-	pushd out && \
+	cd out && \
 	find * -name "ca*" -type f | awk -F '/' '{system("archiver make ../pkg/" $$1 ".zip " $$0)}' && \
-	popd
+	cd ..
 
 .PHONY: release
 release: $(GHR)
