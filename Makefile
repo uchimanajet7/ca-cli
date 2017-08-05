@@ -25,7 +25,7 @@ $(GHR): ; @go get github.com/tcnksm/ghr
 .PHONY: deps
 deps:
 	go get -v -t -d ./... && \
-	go get -v -u github.com/inconshreveable/mousetrap 
+	go get -v github.com/inconshreveable/mousetrap 
 	# need windows/amd64
 
 .PHONY: build
@@ -75,3 +75,18 @@ check: lint vet test build
 .PHONY: help
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
+
+.PHONY: cover
+cover:
+	set -e; \
+	COVER_MODE=atomic; \
+	COVER_FILE=coverage.txt; \
+	echo "mode: $$COVER_MODE" > $$COVER_FILE; \
+	for d in $$(go list ./... | grep -v vendor); do \
+		go test -race -coverprofile=profile.out -covermode=$$COVER_MODE $$d; \
+    	if [ -f profile.out ]; then \
+        	cat profile.out | tail -n +2 >> $$COVER_FILE; \
+			rm profile.out; \
+    	fi \
+	done; \
+	go tool cover -html=$$COVER_FILE
