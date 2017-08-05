@@ -3,6 +3,9 @@
 *.dll
 *.so
 *.dylib
+ca
+pkg
+coverage.txt
 
 # Test binary, build with `go test -c`
 *.test
