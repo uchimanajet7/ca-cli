@@ -24,6 +24,7 @@ $(GHR): ; @go get github.com/tcnksm/ghr
 
 .PHONY: deps
 deps:
+	@go version
 	go get -v -t -d ./... && \
 	go get -v github.com/inconshreveable/mousetrap 
 	# need windows/amd64
