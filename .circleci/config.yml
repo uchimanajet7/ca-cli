@@ -31,7 +31,7 @@ jobs:
             - ~/pkg
 
   deploy:
-    # working_directory: ~/blog.stormcat.io/blog
+    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
     steps:
       - restore_cache:
           keys:
