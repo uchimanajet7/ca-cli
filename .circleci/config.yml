@@ -22,7 +22,10 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
-      - run: make package
+      - run: 
+          name: create cross compiled package
+          command: make package
+
       # - run: make package && make release
       # - run: make release
       # - run: go get -v -t -d ./...
