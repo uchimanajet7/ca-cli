@@ -25,29 +25,9 @@ jobs:
       - run: 
           name: Create cross compiled package
           command: make package
-      - save_cache:
-          key: package-{{ .Revision }}
-          paths:
-            - ~/pkg
-
-  deploy:
-    working_directory: /go/src/github.com/{{ORG_NAME}}/{{REPO_NAME}}
-    steps:
-      - restore_cache:
-          keys:
-            - package-{{ .Revision }}
-      - run:
-          name: Deploy GitHub releases page 
-          command: make release
-
-workflows:
-  version: 2
-  build_and_deploy:
-    jobs:
-      - build
       - deploy:
-          requires:
-            - build 
-          #filters:
-          #  branches:
-          #    only: master    
+          name: Deploy GitHub releases page
+          command: |
+            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+              make release
+            fi
