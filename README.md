@@ -19,7 +19,7 @@ The `ca` is command line tool. You can easily use the `Cloud Automator` API. The
 	- https://cloudautomator.com/api_docs/v1/api.html
 
 ## Demo
-
+![ca_cli_demo](https://user-images.githubusercontent.com/6448792/29017893-d140d520-7b93-11e7-98d0-6df767fc3643.gif)
 
 ## Features
 - Works on Mac / Linux / Windows by binary file cross - compiled with Go.
@@ -115,6 +115,42 @@ $ go get github.com/uchimanajet7/ca-cli
 $ cd $GOPATH/src/github.com/uchimanajet7/ca-cli
 $ make
 ```
+
+## Object type parameters
+
+It is necessary to specify the `object type` as parameter when ca `job create` command.
+
+An execution example is shown below.
+
+```	console
+$ ./ca job create \
+--name "ca job create exsample" \
+--aws-account-id 1 \
+--rule-type cron \
+--rule-value hour=2,minutes=0,schedule_type=weekly,weekly_schedule=monday,friday \
+--action-type create_image \
+--action-value region=ap-northeast-1\
+,specify_image_instance=identifier\
+,instance_id=i-xxxxxxxxxxxxxxxxx\
+,generation=1\
+,image_name=exsample-ami\
+,description="Job Create Exsample Cloud Automator CLI"\
+,reboot_instance=true\
+,additional_tag_key=name\
+,additional_tag_value=exsample\
+,add_same_tag_to_snapshot=true\
+,trace_status=true\
+,recreate_image_if_ami_status_failed=true
+```
+
+`--rule-value` and `--action-value` flag are `object type`.
+**API parameter name** `=` **value** format is connected with `,` and passed to the flag. If you want to express **array** by **value**, you can connect values with `,`.
+
+***see also:***
+
+- Cloud Automator API
+	- https://cloudautomator.com/api_docs/v1/api.html#ジョブ-post
+
 
 ## Author
 [uchimanajet7](https://github.com/uchimanajet7)
