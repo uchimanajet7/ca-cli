@@ -53,6 +53,10 @@ package: cross $(ARCHIVER)
 release: $(GHR)
 	ghr -u $(GITHUB_ORG) $(VERSION) pkg/
 
+.PHONY: pre-release
+pre-release: $(GHR)
+	ghr -u $(GITHUB_ORG) pre-release pkg/
+
 .PHONY: digest
 digest:
 	openssl dgst -sha256 pkg/*.zip

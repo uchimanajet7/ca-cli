@@ -28,6 +28,8 @@ jobs:
       - deploy:
           name: Deploy GitHub releases page
           command: |
-            if [ "${CIRCLE_BRANCH}" != "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
               make release
+            else
+              make pre-release
             fi
