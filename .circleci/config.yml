@@ -3,6 +3,8 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
+
+  # build setting
   build:
     docker:
       # specify the version
@@ -23,11 +25,32 @@ jobs:
 
       # specify any bash command here prefixed with `run: `
       - run: 
-          name: create cross compiled package
+          name: Create cross compiled package
           command: make package
+      - save_cache:
+          key: package-{{ .Revision }}
+          paths:
+            - ~/pkg
 
-      # - run: make package && make release
-      # - run: make release
-      # - run: go get -v -t -d ./...
-      # - run: go test -v ./...
-    
+  # deploy setting
+  deploy:
+    # working_directory: ~/blog.stormcat.io/blog
+    steps:
+      - restore_cache:
+          keys:
+            - package-{{ .Revision }}
+      - run:
+          name: Deploy GitHub releases page 
+          command: make release
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build 
+          #filters:
+          #  branches:
+          #    only: master    
