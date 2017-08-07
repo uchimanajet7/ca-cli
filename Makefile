@@ -55,7 +55,7 @@ release: $(GHR)
 
 .PHONY: pre-release
 pre-release: $(GHR)
-	ghr -u $(GITHUB_ORG) -prerelease pkg/
+	ghr -prerelease -u $(GITHUB_ORG) $(VERSION) pkg/
 
 .PHONY: digest
 digest:
