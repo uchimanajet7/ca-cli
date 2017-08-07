@@ -26,7 +26,7 @@ func execConfigure(cmd *cobra.Command, args []string) error {
 	}
 
 	paramProfileName := rootPprofileName
-	fmt.Printf("Register the information necessary for execution as a profile of \"%s\".\n", paramProfileName)
+	fmt.Printf("Register the information necessary for execution as a profile of \"%s\".\n\n", paramProfileName)
 
 	// get config data
 	currentConfig, err := getConfig()
@@ -35,7 +35,7 @@ func execConfigure(cmd *cobra.Command, args []string) error {
 		_, err := getProfile(paramProfileName)
 		if err == nil {
 			// if there is existing value
-			fmt.Printf("\nCurrent \"%s\" profile value: \n", paramProfileName)
+			fmt.Printf("Current \"%s\" profile value: \n", paramProfileName)
 			drawConfigTable(paramProfileName, currentConfig)
 
 			if !prompter.YN(fmt.Sprintf("Overwrite current \"%s\" profile value?", paramProfileName), false) {
