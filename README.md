@@ -42,6 +42,7 @@ First of all, create a profile using the `configure` command.
 ```	console
 $ ./ca configure
 ```
+`API Key` and `Endpoint` can be registered by executing the command.
 
 ```console
 $ ./ca configure
@@ -51,27 +52,68 @@ API Key:
 API Key: 123**************************abc
 Endpoint:
 ```
+`API Key` is **required**, `Endpoint` is set to change to default.
+
+The `ca` command invoke the API using the registered `API Key`.
+
+### Multiple profiles
+
+You can use it when you have multiple `Cloud Automator` accounts, or want to access multiple `Endpoint`.
+
+Add the `--profile` flag to the command and specify the profile name.
+
+You can create profiles named user1 and user2 by doing as follows.
+
+```console
+$ ./ca configure --profile user1
+  :
+  (Enter information about user1)
+
+$ ./ca configure --profile user2
+  :
+  (Enter information about user2)
+```
+To use the registered profile, please use the `--profile` flag.
+
+### More information
 
 Please see the help.
 
 ```	console
-$ ./tlc --help                                                   
-This tool is OneTab URL list cleaner
+$ ./ca help
+A command line tool to invoke Cloud Automator(CA) API
 
 Usage:
-  tlc [command]
+  ca [command]
 
 Available Commands:
-  run         Clean the list of "OneTab"
-  version     Print the version number of tlc
+  aws-account Manage CA AWS accounts
+  configure   Manage ca-cli profiles
+  help        Help about any command
+  job         Manage CA jobs
+  log         Manage CA job logs
+  version     Print the version number of ca-cli
 
-Use "tlc [command] --help" for more information about a command.
+Flags:
+  -h, --help             help for ca
+  -p, --profile string   Specify profile name (default "default")
+
+Use "ca [command] --help" for more information about a command.
 ```
 
 ## Installation
 
+Please select the package file for your own environment from the releases page, download and unpack it, and put the executable file in a place where included in PATH.
+
+- Releases · uchimanajet7/ca-cli
+	- https://github.com/uchimanajet7/ca-cli/releases
+
+If you build from source yourself.
+
 ```	console
 $ go get github.com/uchimanajet7/ca-cli
+$ cd $GOPATH/src/github.com/uchimanajet7/ca-cli
+$ make
 ```
 
 ## Author
