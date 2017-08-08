@@ -51,11 +51,11 @@ package: cross $(ARCHIVER)
 
 .PHONY: release
 release: $(GHR)
-	ghr -u $(GITHUB_ORG) $(VERSION) pkg/
+	ghr -delete -u $(GITHUB_ORG) $(VERSION) pkg/
 
 .PHONY: pre-release
 pre-release: $(GHR)
-	ghr -prerelease -u $(GITHUB_ORG) $(VERSION) pkg/
+	ghr -delete -prerelease -u $(GITHUB_ORG) $(VERSION) pkg/
 
 .PHONY: digest
 digest:
