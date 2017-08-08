@@ -151,6 +151,18 @@ $ ./ca job create \
 - Cloud Automator API
 	- https://cloudautomator.com/api_docs/v1/api.html#ジョブ-post
 
+## Useful JSON tools
+Besides the famous JSON tool `jq`, there are useful ones implemented by golang.
+
+- jq
+	- https://stedolan.github.io/jq/
+
+Especially `jid` is convenient because I can drill down into JSON interactively.
+
+- simeji/jid: json incremental digger
+	- https://github.com/simeji/jid
+- JSONをインタラクティブに掘り下げるコマンド jid - Qiita
+	- http://qiita.com/simeji/items/dd0464b7ed91c51ee618
 
 ## Author
 [uchimanajet7](https://github.com/uchimanajet7)
