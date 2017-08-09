@@ -48,7 +48,7 @@ func isValidJobRuleType(name string) (bool, bool) {
 
 // see also:
 // https://cloudautomator.com/api_docs/v1/api.html#header--2
-func createJobRuleValueParameter(ruleName string, raw string) (*map[string]interface{}, error) {
+func createJobParseObjectParameter(raw string, msg string) (*map[string]interface{}, error) {
 	// parse raw string
 	rawSlice := strings.Split(raw, ",")
 	parsedMap := make(map[string]interface{}, len(rawSlice))
@@ -59,7 +59,7 @@ func createJobRuleValueParameter(ruleName string, raw string) (*map[string]inter
 			slice := strings.Split(v, "=")
 
 			if len(slice) < 2 {
-				return nil, errors.New("\nPlease specify flag [--rule-type] required CA job trigger type.")
+				return nil, errors.New(msg)
 			}
 			mapKey := strings.TrimSpace(slice[0])
 			mapVal := strings.TrimSpace(slice[1])

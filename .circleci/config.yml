@@ -22,9 +22,17 @@ jobs:
       - checkout
 
       # specify any bash command here prefixed with `run: `
-      - run: make package
-      # - run: make package && make release
-      # - run: make release
-      # - run: go get -v -t -d ./...
-      # - run: go test -v ./...
-    
+      - run: 
+          name: Create cross compiled package
+          command: make package
+      - run: 
+          name: Display sha256 of release package
+          command: make digest          
+      - deploy:
+          name: Deploy GitHub releases page
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              make release
+            else
+              make pre-release
+            fi

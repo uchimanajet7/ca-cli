@@ -23,62 +23,58 @@ $(GHR): ; @go get github.com/tcnksm/ghr
 .DEFAULT_GOAL := build
 
 .PHONY: deps
-deps:
+deps: ## Get dependent package with go get.
 	@go version
-	go get -v -t -d ./... && \
-	go get -v github.com/inconshreveable/mousetrap 
-	# need windows/amd64
+	go get -v -t -d ./...
+# need windows/amd64
+	go get -v github.com/inconshreveable/mousetrap
 
 .PHONY: build
-build: deps
+build: deps ## Build a binary that runs in the current environment.(make default)
 	go build -v -ldflags $(LDFLAGS) -o ./$(BINARY)
 
 .PHONY: install
-install: deps
-	go install -ldflags $(LDFLAGS)
+install: deps ## Execute "go install" command.
+	go install -v -ldflags $(LDFLAGS) -o ./$(BINARY)
 
 .PHONY: cross
-cross: deps $(GOX)
+cross: deps $(GOX) ## Run cross-compilation and create darwin, linux, windows binaries.
 	rm -rf ./out && \
 	gox -verbose -ldflags $(LDFLAGS) -osarch $(OSARCH) -output "./out/${GITHUB_REPO}_${VERSION}_{{.OS}}_{{.Arch}}/$(BINARY)"
 
 .PHONY: package
-package: cross $(ARCHIVER)
+package: cross $(ARCHIVER) ## Run cross-compiling and create release packages for darwin, linux, windows.
 	rm -rf ./pkg && mkdir ./pkg && \
 	cd out && \
 	find * -name "ca*" -type f | awk -F '/' '{system("archiver make ../pkg/" $$1 ".zip " $$0)}' && \
 	cd ..
 
 .PHONY: release
-release: $(GHR)
-	ghr -u $(GITHUB_ORG) $(VERSION) pkg/
+release: $(GHR) ## Upload release package to GitHub.
+	ghr -delete -u $(GITHUB_ORG) $(VERSION) pkg/
+
+.PHONY: pre-release
+pre-release: $(GHR) ## Upload pre-release package to GitHub.
+	ghr -delete -prerelease -u $(GITHUB_ORG) $(VERSION) pkg/
 
 .PHONY: digest
-digest:
+digest: ## Display message digest of release package.
 	openssl dgst -sha256 pkg/*.zip
 
 .PHONY: lint
-lint: $(LINT)
+lint: $(LINT) ## Execute the "golint" command.
 	@golint ./...
 
 .PHONY: vet
-vet:
+vet: ## Execute the "go vet" command.
 	@go vet ./...
 
 .PHONY: test
-test:
+test: ## Execute the "go test" command.
 	@go test -v ./...
 
-.PHONY: check
-check: lint vet test build
-
-# Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
-.PHONY: help
-help:
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
-
 .PHONY: cover
-cover:
+cover: ## Execute the "go test" command and get coverage.
 	set -e; \
 	COVER_MODE=atomic; \
 	COVER_FILE=coverage.txt; \
@@ -91,3 +87,8 @@ cover:
     	fi \
 	done; \
 	go tool cover -html=$$COVER_FILE
+
+# Absolutely awesome: http://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
+.PHONY: help
+help: ## Display help message.
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
