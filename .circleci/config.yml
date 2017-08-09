@@ -25,6 +25,9 @@ jobs:
       - run: 
           name: Create cross compiled package
           command: make package
+      - run: 
+          name: Display sha256 of release package
+          command: make digest          
       - deploy:
           name: Deploy GitHub releases page
           command: |
