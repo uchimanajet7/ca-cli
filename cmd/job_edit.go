@@ -40,10 +40,10 @@ func init() {
 	jobCmd.AddCommand(jobEditCmd)
 
 	jobEditCmd.Flags().StringVar(&jobEditID, "job-id", "", "Specify CA job ID. [required]")
-	jobEditCmd.Flags().StringVar(&jobEditName, "name", "", "Specify CA job name. [required]")
-	jobEditCmd.Flags().StringVar(&jobEditAwsAccountID, "aws-account-id", "", "Specify CA AWS account ID. [required]")
-	jobEditCmd.Flags().StringVar(&jobEditRuleValue, "rule-value", "", "Specify CA job trigger setting value. [required]")
-	jobEditCmd.Flags().StringVar(&jobEditActionValue, "action-value", "", "Specify CA job action setting value. [required]")
+	jobEditCmd.Flags().StringVar(&jobEditName, "name", "", "Specify CA job name.")
+	jobEditCmd.Flags().StringVar(&jobEditAwsAccountID, "aws-account-id", "", "Specify CA AWS account ID.")
+	jobEditCmd.Flags().StringVar(&jobEditRuleValue, "rule-value", "", "Specify CA job trigger setting value.")
+	jobEditCmd.Flags().StringVar(&jobEditActionValue, "action-value", "", "Specify CA job action setting value.")
 }
 
 func execJobEdit(cmd *cobra.Command, args []string) error {
@@ -108,37 +108,34 @@ func createJobEditPostBody() (io.Reader, error) {
 	params := map[string]interface{}{}
 
 	paramName := jobEditName
-	if paramName == "" {
-		return nil, errors.New("\nPlease specify flag [--name] required CA job name.")
+	if paramName != "" {
+		params["name"] = paramName
 	}
-	params["name"] = paramName
 
 	paramAwsAccountID := jobEditAwsAccountID
-	if paramAwsAccountID == "" {
-		return nil, errors.New("\nPlease specify flag [--aws-account-id] required CA AWS account ID.")
+	if paramAwsAccountID != "" {
+		params["aws_account_id"] = paramAwsAccountID
 	}
-	params["aws_account_id"] = paramAwsAccountID
 
 	paramRuleValue := jobEditRuleValue
-	if paramRuleValue == "" {
-		//return nil, errors.New("\nPlease specify flag [--rule-value] required CA job trigger setting value.")
+	if paramRuleValue != "" {
+		parsedParam, err := createJobParseObjectParameter(paramRuleValue, "")
+		if err == nil {
+			params["rule_value"] = *parsedParam
+		}
 	}
-	//parsedParam, err := createJobRuleValueParameter("", paramRuleValue)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//params["rule_value"] = *parsedParam
 
 	paramActionValue := jobEditActionValue
-	if paramActionValue == "" {
-		//return nil, errors.New("\nPlease specify flag [--action-value] required CA job action setting value.")
+	if paramActionValue != "" {
+		parsedParam, err := createJobParseObjectParameter(paramActionValue, "")
+		if err == nil {
+			params["action_value"] = parsedParam
+		}
 	}
-	//parsedParam2, err := createJobRuleValueParameter("", paramActionValue)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//params["action_value"] = parsedParam2
-	fmt.Printf("%+v\n", params)
+
+	if len(params) <= 0 {
+		return nil, errors.New("\nNone of the values to be changed has been specified.")
+	}
 
 	paramBytes, err := json.Marshal(params)
 	if err != nil {

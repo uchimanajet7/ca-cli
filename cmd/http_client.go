@@ -28,12 +28,6 @@ func createClient(endpointURL string, httpClient *http.Client) (*Client, error) 
 		return nil, errors.Wrapf(err, "failed to parse url: %s", endpointURL)
 	}
 
-	// use HTTPS access
-	//tr := &http.Transport{
-	//	TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	//}
-	//httpClient.Transport = tr
-
 	client := &Client{
 		EndpointURL: parsedURL,
 		HTTPClient:  httpClient,

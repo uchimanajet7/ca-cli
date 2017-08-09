@@ -131,7 +131,7 @@ func createJobCreatePostBody() (io.Reader, error) {
 		if paramRuleValue == "" {
 			return nil, errors.New("\nPlease specify flag [--rule-value] required CA job trigger setting value.")
 		}
-		parsedParam, err := createJobRuleValueParameter(paramRuleType, paramRuleValue)
+		parsedParam, err := createJobParseObjectParameter(paramRuleValue, "\nPlease specify flag [--rule-value] required CA job trigger setting value.")
 		if err != nil {
 			return nil, err
 		}
@@ -150,11 +150,11 @@ func createJobCreatePostBody() (io.Reader, error) {
 	if paramActionValue == "" {
 		return nil, errors.New("\nPlease specify flag [--action-value] required CA job action setting value.")
 	}
-	parsedParam2, err := createJobRuleValueParameter(paramActionType, paramActionValue)
+	parsedParam, err := createJobParseObjectParameter(paramActionValue, "\nPlease specify flag [--action-value] required CA job action setting value.")
 	if err != nil {
 		return nil, err
 	}
-	params["action_value"] = parsedParam2
+	params["action_value"] = parsedParam
 
 	paramBytes, err := json.Marshal(params)
 	if err != nil {
