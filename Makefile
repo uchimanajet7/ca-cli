@@ -1,5 +1,5 @@
 BINARY := ca
-VERSION	:= v0.1.0
+VERSION	:= v0.1.1
 REVISION := $(shell git rev-parse --short HEAD)
 GITHUB_ORG := uchimanajet7
 GITHUB_REPO := ca-cli

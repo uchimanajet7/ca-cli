@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -31,6 +32,12 @@ var jobCreateActionType string
 // holds value of "action-value" flag
 var jobCreateActionValue string
 
+// holds value of "completed-post-process-id" flag
+var jobCreateCompletedPostProcessID string
+
+// holds value of "failed-post-process-id" flag
+var jobCreateFailedPostProcessID string
+
 var jobCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Register new CA job",
@@ -44,9 +51,11 @@ func init() {
 	jobCreateCmd.Flags().StringVar(&jobCreateName, "name", "", "Specify CA job name. [required]")
 	jobCreateCmd.Flags().StringVar(&jobCreateAwsAccountID, "aws-account-id", "", "Specify CA AWS account ID. [required]")
 	jobCreateCmd.Flags().StringVar(&jobCreateRuleType, "rule-type", "", "Specify CA job trigger type. [required]")
-	jobCreateCmd.Flags().StringVar(&jobCreateRuleValue, "rule-value", "", "Specify CA job trigger setting value. [required only \"--rule-type=cron/sqs\"]")
+	jobCreateCmd.Flags().StringVar(&jobCreateRuleValue, "rule-value", "", "Specify CA job trigger setting values. [required only \"--rule-type=cron/sqs\"]")
 	jobCreateCmd.Flags().StringVar(&jobCreateActionType, "action-type", "", "Specify CA job action type. [required]")
-	jobCreateCmd.Flags().StringVar(&jobCreateActionValue, "action-value", "", "Specify CA job action setting value. [required]")
+	jobCreateCmd.Flags().StringVar(&jobCreateActionValue, "action-value", "", "Specify CA job action setting values. [required]")
+	jobCreateCmd.Flags().StringVar(&jobCreateCompletedPostProcessID, "completed-post-process-id", "", "Specify array that contains post-processing IDs to be executed if the CA job succeeds.")
+	jobCreateCmd.Flags().StringVar(&jobCreateFailedPostProcessID, "failed-post-process-id", "", "Specify array that contains post-processing IDs to be executed if the CA job faileds.")
 }
 
 func execJobCreate(cmd *cobra.Command, args []string) error {
@@ -129,9 +138,9 @@ func createJobCreatePostBody() (io.Reader, error) {
 	paramRuleValue := jobCreateRuleValue
 	if required {
 		if paramRuleValue == "" {
-			return nil, errors.New("\nPlease specify flag [--rule-value] required CA job trigger setting value.")
+			return nil, errors.New("\nPlease specify flag [--rule-value] required CA job trigger setting values.")
 		}
-		parsedParam, err := createJobParseObjectParameter(paramRuleValue, "\nPlease specify flag [--rule-value] required CA job trigger setting value.")
+		parsedParam, err := createJobParseObjectParameter(paramRuleValue, "\nPlease specify flag [--rule-value] required CA job trigger setting values.")
 		if err != nil {
 			return nil, err
 		}
@@ -148,13 +157,25 @@ func createJobCreatePostBody() (io.Reader, error) {
 
 	paramActionValue := jobCreateActionValue
 	if paramActionValue == "" {
-		return nil, errors.New("\nPlease specify flag [--action-value] required CA job action setting value.")
+		return nil, errors.New("\nPlease specify flag [--action-value] required CA job action setting values.")
 	}
-	parsedParam, err := createJobParseObjectParameter(paramActionValue, "\nPlease specify flag [--action-value] required CA job action setting value.")
+	parsedParam, err := createJobParseObjectParameter(paramActionValue, "\nPlease specify flag [--action-value] required CA job action setting values.")
 	if err != nil {
 		return nil, err
 	}
-	params["action_value"] = parsedParam
+	params["action_value"] = *parsedParam
+
+	// optional
+	paramCompletedPostProcessID := jobCreateCompletedPostProcessID
+	if paramCompletedPostProcessID != "" {
+		params["completed_post_process_id"] = strings.Split(paramCompletedPostProcessID, ",")
+	}
+
+	// optional
+	paramFailedPostProcessID := jobCreateFailedPostProcessID
+	if paramFailedPostProcessID != "" {
+		params["failed_post_process_id"] = strings.Split(paramFailedPostProcessID, ",")
+	}
 
 	paramBytes, err := json.Marshal(params)
 	if err != nil {

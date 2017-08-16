@@ -9,6 +9,7 @@ import (
 	"io"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -29,6 +30,12 @@ var jobEditRuleValue string
 // holds value of "action-value" flag
 var jobEditActionValue string
 
+// holds value of "completed-post-process-id" flag
+var jobEditCompletedPostProcessID string
+
+// holds value of "failed-post-process-id" flag
+var jobEditFailedPostProcessID string
+
 var jobEditCmd = &cobra.Command{
 	Use:   "edit",
 	Short: "Update CA job",
@@ -42,8 +49,10 @@ func init() {
 	jobEditCmd.Flags().StringVar(&jobEditID, "job-id", "", "Specify CA job ID. [required]")
 	jobEditCmd.Flags().StringVar(&jobEditName, "name", "", "Specify CA job name.")
 	jobEditCmd.Flags().StringVar(&jobEditAwsAccountID, "aws-account-id", "", "Specify CA AWS account ID.")
-	jobEditCmd.Flags().StringVar(&jobEditRuleValue, "rule-value", "", "Specify CA job trigger setting value.")
-	jobEditCmd.Flags().StringVar(&jobEditActionValue, "action-value", "", "Specify CA job action setting value.")
+	jobEditCmd.Flags().StringVar(&jobEditRuleValue, "rule-value", "", "Specify CA job trigger setting values.")
+	jobEditCmd.Flags().StringVar(&jobEditActionValue, "action-value", "", "Specify CA job action setting values.")
+	jobEditCmd.Flags().StringVar(&jobEditCompletedPostProcessID, "completed-post-process-id", "", "Specify array that contains post-processing IDs to be executed if the CA job succeeds.")
+	jobEditCmd.Flags().StringVar(&jobEditFailedPostProcessID, "failed-post-process-id", "", "Specify array that contains post-processing IDs to be executed if the CA job faileds.")
 }
 
 func execJobEdit(cmd *cobra.Command, args []string) error {
@@ -129,8 +138,18 @@ func createJobEditPostBody() (io.Reader, error) {
 	if paramActionValue != "" {
 		parsedParam, err := createJobParseObjectParameter(paramActionValue, "")
 		if err == nil {
-			params["action_value"] = parsedParam
+			params["action_value"] = *parsedParam
 		}
+	}
+
+	paramCompletedPostProcessID := jobEditCompletedPostProcessID
+	if paramCompletedPostProcessID != "" {
+		params["completed_post_process_id"] = strings.Split(paramCompletedPostProcessID, ",")
+	}
+
+	paramFailedPostProcessID := jobEditFailedPostProcessID
+	if paramFailedPostProcessID != "" {
+		params["failed_post_process_id"] = strings.Split(paramFailedPostProcessID, ",")
 	}
 
 	if len(params) <= 0 {
