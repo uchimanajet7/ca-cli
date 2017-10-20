@@ -167,6 +167,10 @@ Especially `jid` is convenient because I can drill down into JSON interactively.
 ## Author
 [uchimanajet7](https://github.com/uchimanajet7)
 
+- Cloud Automator のAPI を呼び出すCLI をgolang で作ってみた #cloudautomator #golang #swx - uchimanajet7のメモ
+	- http://uchimanajet7.hatenablog.com/entry/2017/08/09/121236
+- Cloud Automator のAPI に後処理が追加されたのでCLIにも追加した件 #cloudautomator #golang #swx - uchimanajet7のメモ
+	- http://uchimanajet7.hatenablog.com/entry/2017/08/17/090018
 
 ## Licence
 [MIT](https://github.com/uchimanajet7/ca-cli/blob/master/LICENSE)
